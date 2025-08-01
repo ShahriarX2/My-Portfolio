@@ -44,10 +44,10 @@ const Navbar = () => {
 
         {/* Navigation Links */}
         <nav className="space-x-6 hidden md:block">
-          {["Home", "About", "Projects", "Contact"].map((item) => (
+          {["Home", "About", "Mentors", "Tech Stack", "Projects", "Contact"].map((item) => (
             <Link
               key={item}
-              to={item.toLowerCase()}
+              to={item === "Tech Stack" ? "techstack" : item.toLowerCase()}
               smooth={true}
               duration={500}
               offset={-70}

@@ -17,9 +17,9 @@ const techLogos = [
 
 const TechStack = () => {
   return (
-    <section className="py-20 px-4">
+    <section id="techstack" className="py-20 px-4">
       <div className="max-w-5xl mx-auto text-center">
-        <h2 className="text-5xl font-bold mb-10 text-transparent bg-clip-text bg-gradient-to-r from-[#6366f1] to-[#a855f7]">
+        <h2 className="py-5 text-5xl font-bold mb-10 text-transparent bg-clip-text bg-gradient-to-r from-[#6366f1] to-[#a855f7]">
           My Tech Stack
         </h2>
 

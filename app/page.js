@@ -7,6 +7,7 @@ import Contact from "@/components/Contact";
 import { Spotlight } from "@/components/ui/Spotlight";
 import Mentors from "@/components/Mentors";
 import TechStack from "@/components/TechStack";
+import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
@@ -17,6 +18,7 @@ export default function Home() {
       <TechStack />
       <Projects />
       <Contact />
+      <Footer />
     </main>
   );
 }
