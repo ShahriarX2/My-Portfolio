@@ -6,6 +6,7 @@ import Projects from "@/components/Projects";
 import Contact from "@/components/Contact";
 import { Spotlight } from "@/components/ui/Spotlight";
 import Mentors from "@/components/Mentors";
+import TechStack from "@/components/TechStack";
 
 export default function Home() {
   return (
@@ -13,6 +14,7 @@ export default function Home() {
       <Hero />
       <About />
       <Mentors />
+      <TechStack />
       <Projects />
       <Contact />
     </main>
