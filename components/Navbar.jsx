@@ -36,7 +36,7 @@ const Navbar = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
     >
-      <div className="px-20 py-4 flex justify-between items-center">
+      <div className="px-20 py-4 flex justify-center md:justify-between items-center">
         {/* Logo */}
         <h1 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-violet-500 to-pink-500 cursor-pointer">
           Shahriar Hossen
