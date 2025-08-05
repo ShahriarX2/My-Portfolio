@@ -2,8 +2,93 @@
 
 import { motion } from "framer-motion";
 import { FaAngleDown } from "react-icons/fa6";
+import { useState } from "react";
 
 const Contact = () => {
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    company: "",
+    email: "",
+    phone: "",
+    message: "",
+    agreedToPolicy: false,
+  });
+
+  const [errors, setErrors] = useState({});
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = "First name is required";
+    }
+
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = "Last name is required";
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Email is invalid";
+    }
+
+    if (formData.phone.trim() && !/^\d{3}-\d{3}-\d{4}$/.test(formData.phone)) {
+      newErrors.phone = "Phone should match format: 123-456-7890";
+    }
+
+    if (!formData.message.trim()) {
+      newErrors.message = "Message is required";
+    }
+
+    if (!formData.agreedToPolicy) {
+      newErrors.agreedToPolicy = "You must agree to the privacy policy";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (validateForm()) {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        body: JSON.stringify(formData),
+      });
+
+      const result = await res.json();
+      if (result.success) {
+        console.log("Message sent successfully!");
+      } else {
+        console.log("Failed to send message.");
+      }
+
+      // Reset form after successful submission
+      setFormData({
+        firstName: "",
+        lastName: "",
+        company: "",
+        email: "",
+        phone: "",
+        message: "",
+        agreedToPolicy: false,
+      });
+      setErrors({});
+    } else {
+      console.log("Form has validation errors:", errors);
+    }
+  };
   return (
     <motion.section
       id="contact"
@@ -22,43 +107,58 @@ const Contact = () => {
           to reach out!
         </p>
         <form
-          action="#"
-          method="POST"
+          onSubmit={handleSubmit}
           className="mx-auto mt-16 max-w-xl sm:mt-20 p-8 rounded-lg bg-white/5 backdrop-blur-sm border border-white/10"
         >
           <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
             <div>
               <label
-                htmlFor="first-name"
+                htmlFor="firstName"
                 className="block text-sm/6 text-start font-semibold text-white"
               >
                 First name
               </label>
               <div className="mt-2.5">
                 <input
-                  id="first-name"
-                  name="first-name"
+                  id="firstName"
+                  name="firstName"
                   type="text"
+                  value={formData.firstName}
+                  onChange={handleInputChange}
                   autoComplete="given-name"
-                  className="block w-full rounded-md bg-white/5 px-3.5 py-2 text-base text-gray-900 dark:text-gray-300 outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-700 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+                  className={`block w-full rounded-md bg-white/5 px-3.5 py-2 text-base text-gray-900 dark:text-gray-300 outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-700 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 ${
+                    errors.firstName ? "outline-red-500" : ""
+                  }`}
                 />
+                {errors.firstName && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.firstName}
+                  </p>
+                )}
               </div>
             </div>
             <div>
               <label
-                htmlFor="last-name"
+                htmlFor="lastName"
                 className="block text-sm/6 text-start font-semibold text-white"
               >
                 Last name
               </label>
               <div className="mt-2.5">
                 <input
-                  id="last-name"
-                  name="last-name"
+                  id="lastName"
+                  name="lastName"
                   type="text"
+                  value={formData.lastName}
+                  onChange={handleInputChange}
                   autoComplete="family-name"
-                  className="block w-full rounded-md bg-white/5 px-3.5 py-2 text-base text-gray-900 dark:text-gray-300 outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-700 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+                  className={`block w-full rounded-md bg-white/5 px-3.5 py-2 text-base text-gray-900 dark:text-gray-300 outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-700 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 ${
+                    errors.lastName ? "outline-red-500" : ""
+                  }`}
                 />
+                {errors.lastName && (
+                  <p className="mt-1 text-sm text-red-500">{errors.lastName}</p>
+                )}
               </div>
             </div>
             <div className="sm:col-span-2">
@@ -73,6 +173,8 @@ const Contact = () => {
                   id="company"
                   name="company"
                   type="text"
+                  value={formData.company}
+                  onChange={handleInputChange}
                   autoComplete="organization"
                   className="block w-full rounded-md bg-white/5 px-3.5 py-2 text-base text-gray-900 dark:text-gray-300 outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-700 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
                 />
@@ -90,9 +192,16 @@ const Contact = () => {
                   id="email"
                   name="email"
                   type="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
                   autoComplete="email"
-                  className="block w-full rounded-md bg-white/5 px-3.5 py-2 text-base text-gray-900 dark:text-gray-300 outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-700 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+                  className={`block w-full rounded-md bg-white/5 px-3.5 py-2 text-base text-gray-900 dark:text-gray-300 outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-700 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 ${
+                    errors.email ? "outline-red-500" : ""
+                  }`}
                 />
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-500">{errors.email}</p>
+                )}
               </div>
             </div>
             <div className="sm:col-span-2">
@@ -122,13 +231,20 @@ const Contact = () => {
                     />
                   </div>
                   <input
-                    id="phone-number"
-                    name="phone-number"
+                    id="phone"
+                    name="phone"
                     type="text"
+                    value={formData.phone}
+                    onChange={handleInputChange}
                     placeholder="123-456-7890"
-                    className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 dark:text-gray-300 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none sm:text-sm/6"
+                    className={`block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 dark:text-gray-300 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none sm:text-sm/6 ${
+                      errors.phone ? "outline-red-500" : ""
+                    }`}
                   />
                 </div>
+                {errors.phone && (
+                  <p className="mt-1 text-sm text-red-500">{errors.phone}</p>
+                )}
               </div>
             </div>
             <div className="sm:col-span-2">
@@ -143,9 +259,15 @@ const Contact = () => {
                   id="message"
                   name="message"
                   rows={4}
-                  className="block w-full rounded-md bg-white/5 px-3.5 py-2 text-base text-gray-900 dark:text-gray-300 outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-700 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
-                  defaultValue={""}
+                  value={formData.message}
+                  onChange={handleInputChange}
+                  className={`block w-full rounded-md bg-white/5 px-3.5 py-2 text-base text-gray-900 dark:text-gray-300 outline-1 -outline-offset-1 outline-gray-300 dark:outline-gray-700 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 ${
+                    errors.message ? "outline-red-500" : ""
+                  }`}
                 />
+                {errors.message && (
+                  <p className="mt-1 text-sm text-red-500">{errors.message}</p>
+                )}
               </div>
             </div>
             <div className="flex gap-x-4 sm:col-span-2">
@@ -153,17 +275,21 @@ const Contact = () => {
                 <div className="group relative inline-flex w-8 shrink-0 rounded-full bg-gray-200 dark:bg-gray-700 p-px inset-ring inset-ring-gray-900/5 outline-offset-2 outline-indigo-600 transition-colors duration-200 ease-in-out has-checked:bg-indigo-600 has-focus-visible:outline-2">
                   <span className="size-4 rounded-full bg-white shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-3.5" />
                   <input
-                    id="agree-to-policies"
-                    name="agree-to-policies"
+                    id="agreedToPolicy"
+                    name="agreedToPolicy"
                     type="checkbox"
+                    checked={formData.agreedToPolicy}
+                    onChange={handleInputChange}
                     aria-label="Agree to policies"
                     className="absolute inset-0 appearance-none focus:outline-hidden"
                   />
                 </div>
               </div>
               <label
-                htmlFor="agree-to-policies"
-                className="text-sm/6 text-gray-600 dark:text-gray-400"
+                htmlFor="agreedToPolicy"
+                className={`text-sm/6 text-gray-600 dark:text-gray-400 ${
+                  errors.agreedToPolicy ? "text-red-500" : ""
+                }`}
               >
                 By selecting this, you agree to our{" "}
                 <a
@@ -174,6 +300,11 @@ const Contact = () => {
                 </a>
                 .
               </label>
+              {errors.agreedToPolicy && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.agreedToPolicy}
+                </p>
+              )}
             </div>
           </div>
           <div className="mt-10">
